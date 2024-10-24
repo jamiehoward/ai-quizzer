@@ -3,9 +3,9 @@ import axios from 'axios';
 const API_KEY = 'sk-proj-PKmDRIEF2d1C98Vjek57T3BlbkFJIW1I5YOA4f86bvE5ZCbt';
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
-export async function generateQuestions(topic, previousQuestions) {
+export async function generateQuestions(subject, gradeLevel, previousQuestions) {
   const previousQuestionsText = previousQuestions.map(q => q.question).join('\n');
-  const prompt = `Generate 10 multiple-choice questions about ${topic}. Provide the response as a JSON object with the following structure:
+  const prompt = `Generate 10 multiple-choice questions about ${subject} suitable for grade ${gradeLevel} students. Provide the response as a JSON object with the following structure:
 
 {
   "questions": [
@@ -38,7 +38,8 @@ Ensure that:
 1. Each question has exactly 4 options.
 2. The "correctAnswer" matches the "text" of one of the options exactly.
 3. Answers are of similar lengths to not be obvious.
-4. Questions are not similar to any of these previous questions:
+4. Questions are appropriate for the specified grade level.
+5. Questions are not similar to any of these previous questions:
 
 ${previousQuestionsText}
 
