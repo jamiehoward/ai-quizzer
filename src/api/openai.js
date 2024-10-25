@@ -1,7 +1,9 @@
-import axios from 'axios';
+import OpenAI from 'openai';
 
-const API_KEY = 'sk-proj-PKmDRIEF2d1C98Vjek57T3BlbkFJIW1I5YOA4f86bvE5ZCbt';
-const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+const openai = new OpenAI({
+  apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true
+});
 
 export async function generateQuestions(subject, gradeLevel, previousQuestions) {
   const previousQuestionsText = previousQuestions.map(q => q.question).join('\n');
@@ -46,31 +48,22 @@ ${previousQuestionsText}
 Respond only with the JSON object, no additional text.`;
 
   try {
-    const response = await axios.post(
-      API_ENDPOINT,
-      {
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'You are a quiz generator that responds only with valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 2500,
-        n: 1,
-        stop: null,
-        response_format: { type: "json_object" }
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`,
-        },
-      }
-    );
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: 'You are a quiz generator that responds only with valid JSON.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 2500,
+      n: 1,
+      stop: null,
+      response_format: { type: "json_object" }
+    });
 
-    console.log('Raw OpenAI response:', response.data.choices[0].message.content);
+    console.log('Raw OpenAI response:', response.choices[0].message.content);
 
-    const generatedQuestions = JSON.parse(response.data.choices[0].message.content);
+    const generatedQuestions = JSON.parse(response.choices[0].message.content);
     console.log('Parsed questions:', generatedQuestions);
 
     return generatedQuestions.questions;
@@ -93,28 +86,19 @@ Correct Answer: ${correctAnswer}
 Provide a brief explanation of the concept, why the correct answer is right, and why the other options are incorrect. Keep the explanation simple and appropriate for the grade level.`;
 
   try {
-    const response = await axios.post(
-      API_ENDPOINT,
-      {
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: 'You are a helpful tutor providing brief, engaging lessons for students.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-        n: 1,
-        stop: null,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`,
-        },
-      }
-    );
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: 'You are a helpful tutor providing brief, engaging lessons for students.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+      n: 1,
+      stop: null,
+    });
 
-    return response.data.choices[0].message.content;
+    return response.choices[0].message.content;
   } catch (error) {
     console.error('Error generating lesson:', error);
     return null;
