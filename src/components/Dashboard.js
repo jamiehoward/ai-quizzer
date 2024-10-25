@@ -10,24 +10,20 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="">
       {/* Navigation Bar */}
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-6xl mx-auto px-4">
+      <nav className="">
           <div className="flex justify-between">
             <div className="flex space-x-7">
-              <div>
                 <Link to="/" className="flex items-center py-4 px-2">
                   <span className="font-semibold text-gray-500 text-lg">Quiz Dashboard</span>
                 </Link>
-              </div>
             </div>
-          </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Your Quizzes</h1>
           <Link 
