@@ -49,7 +49,7 @@ Respond only with the JSON object, no additional text.`;
     const response = await axios.post(
       API_ENDPOINT,
       {
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: 'You are a quiz generator that responds only with valid JSON.' },
           { role: 'user', content: prompt }
@@ -76,6 +76,47 @@ Respond only with the JSON object, no additional text.`;
     return generatedQuestions.questions;
   } catch (error) {
     console.error('Error generating questions:', error);
+    return null;
+  }
+}
+
+export async function generateLesson(subject, gradeLevel, question, options, correctAnswer) {
+  const prompt = `Generate a short, engaging lesson about the following question for a grade ${gradeLevel} student studying ${subject}:
+
+Question: ${question}
+
+Options:
+${options.map(opt => `- ${opt.text}`).join('\n')}
+
+Correct Answer: ${correctAnswer}
+
+Provide a brief explanation of the concept, why the correct answer is right, and why the other options are incorrect. Keep the explanation simple and appropriate for the grade level.`;
+
+  try {
+    const response = await axios.post(
+      API_ENDPOINT,
+      {
+        model: 'gpt-4o',
+        messages: [
+          { role: 'system', content: 'You are a helpful tutor providing brief, engaging lessons for students.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+        n: 1,
+        stop: null,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`,
+        },
+      }
+    );
+
+    return response.data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error generating lesson:', error);
     return null;
   }
 }

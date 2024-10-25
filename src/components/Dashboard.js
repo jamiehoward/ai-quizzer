@@ -46,12 +46,17 @@ function Dashboard() {
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition duration-300 ease-in-out">
                 <div className="p-6">
                   <h3 className="font-bold text-xl mb-2 text-gray-800">{quiz.subject}</h3>
-                  <p className="text-gray-600 mb-4">Grade Level: {quiz.gradeLevel}</p>
+                  <p className="text-gray-600 mb-2">Grade Level: {quiz.gradeLevel}</p>
+                  <p className="text-gray-600 mb-4">
+                    Score: {quiz.score || 0} / {quiz.questions ? quiz.questions.length : 0}
+                  </p>
                   <Link 
                     to={`/quiz/${quiz.id}`} 
                     className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out"
                   >
-                    Start Quiz
+                    {quiz.score !== undefined && quiz.currentQuestionIndex < (quiz.questions ? quiz.questions.length : 0) 
+                      ? 'Resume Quiz' 
+                      : 'Start Quiz'}
                   </Link>
                 </div>
               </div>
